@@ -2,23 +2,63 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const navLinks = [
-  { label: 'Features', href: '#features' },
-  { label: 'Dashboards', href: '#dashboards' },
-  { label: 'Technology', href: '#technology' },
-  { label: 'Architecture', href: '#architecture' },
+  { label: 'Features', href: '#features', id: 'features' },
+  { label: 'Dashboards', href: '#dashboards', id: 'dashboards' },
+  { label: 'Technology', href: '#technology', id: 'technology' },
+  { label: 'Architecture', href: '#architecture', id: 'architecture' },
 ];
+
+const sectionIds = ['home', 'features', 'dashboards', 'technology', 'architecture', 'cta'];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    const observers = sectionIds.map((id) => {
+      const el = document.getElementById(id);
+      if (!el) return null;
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setActiveSection(id);
+          }
+        },
+        { rootMargin: '-40% 0px -50% 0px', threshold: 0 }
+      );
+
+      observer.observe(el);
+      return observer;
+    });
+
+    return () => {
+      observers.forEach((obs) => obs?.disconnect());
+    };
+  }, []);
+
   const closeMenu = () => setMenuOpen(false);
+
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+    const target = document.querySelector(href);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    closeMenu();
+  };
+
+  const isActive = (id) => {
+    if (id === 'features' && activeSection === 'home') return false;
+    return activeSection === id;
+  };
 
   return (
     <header
@@ -29,7 +69,11 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 lg:px-8">
-        <a href="#home" className="group flex items-center gap-2">
+        <a
+          href="#home"
+          onClick={(e) => handleNavClick(e, '#home')}
+          className="group flex items-center gap-2"
+        >
           <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-blue-500 text-xs font-bold text-white shadow-lg shadow-emerald-500/20">
             GS
           </span>
@@ -46,9 +90,17 @@ export default function Navbar() {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-sm font-medium text-slate-300 transition-colors hover:text-white"
+                onClick={(e) => handleNavClick(e, link.href)}
+                className={`relative text-sm font-medium transition-colors ${
+                  isActive(link.id)
+                    ? 'text-emerald-400'
+                    : 'text-slate-300 hover:text-white'
+                }`}
               >
                 {link.label}
+                {isActive(link.id) && (
+                  <span className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-emerald-400" />
+                )}
               </a>
             </li>
           ))}
@@ -86,8 +138,10 @@ export default function Navbar() {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  onClick={closeMenu}
-                  className="block text-sm font-medium text-slate-300 hover:text-white"
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className={`block text-sm font-medium ${
+                    isActive(link.id) ? 'text-emerald-400' : 'text-slate-300 hover:text-white'
+                  }`}
                 >
                   {link.label}
                 </a>

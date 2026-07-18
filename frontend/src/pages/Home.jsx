@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { SiReact, SiFastapi, SiPython, SiPostgresql } from 'react-icons/si';
+import { TbBrain } from 'react-icons/tb';
+import { GiTreeBranch } from 'react-icons/gi';
 import { Line, Doughnut } from '../components/ChartCard';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -170,7 +173,7 @@ function SectionHeader({ title, subtitle }) {
 
 function HeroSection() {
   return (
-    <section id="home" className="relative overflow-hidden pt-24 pb-12 lg:pt-28 lg:pb-16">
+    <section id="home" className="scroll-mt-20 relative overflow-hidden pt-24 pb-12 lg:pt-28 lg:pb-16">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute top-0 left-1/4 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
         <div className="absolute top-20 right-1/4 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
@@ -263,7 +266,7 @@ const whyFeatures = [
 
 function WhySection() {
   return (
-    <section id="features" className="py-10 lg:py-14">
+    <section id="features" className="scroll-mt-20 py-10 lg:py-14">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <SectionHeader
           title="Why GramSaarthi Nexus?"
@@ -324,7 +327,7 @@ const dashboardPreviews = [
 
 function DashboardPreviewSection() {
   return (
-    <section id="dashboards" className="py-10 lg:py-14">
+    <section id="dashboards" className="scroll-mt-20 py-10 lg:py-14">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <SectionHeader
           title="Dashboard Preview"
@@ -359,24 +362,30 @@ function DashboardPreviewSection() {
   );
 }
 
-const technologies = ['React', 'FastAPI', 'Python', 'XGBoost', 'LSTM', 'PostgreSQL'];
+const technologies = [
+  { name: 'React', icon: SiReact, color: 'text-cyan-400' },
+  { name: 'FastAPI', icon: SiFastapi, color: 'text-emerald-400' },
+  { name: 'Python', icon: SiPython, color: 'text-yellow-400' },
+  { name: 'XGBoost', icon: GiTreeBranch, color: 'text-green-400' },
+  { name: 'LSTM', icon: TbBrain, color: 'text-purple-400' },
+  { name: 'PostgreSQL', icon: SiPostgresql, color: 'text-blue-400' },
+];
 
 function TechnologySection() {
   return (
-    <section id="technology" className="py-10 lg:py-14">
+    <section id="technology" className="scroll-mt-20 py-10 lg:py-14">
       <div className="mx-auto max-w-4xl px-6 lg:px-8">
         <SectionHeader title="Technology Used" />
 
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          {technologies.map((tech) => (
+        <div className="flex flex-wrap items-center justify-center gap-5">
+          {technologies.map(({ name, icon: Icon, color }) => (
             <div
-              key={tech}
-              className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3 backdrop-blur-sm transition-all hover:border-emerald-400/30 hover:bg-white/10"
+              key={name}
+              title={name}
+              className="group flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-4 backdrop-blur-sm transition-all hover:border-emerald-400/30 hover:bg-white/10"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500/20 to-blue-500/20 text-xs font-bold text-white">
-                {tech.slice(0, 2).toUpperCase()}
-              </span>
-              <span className="text-xs font-medium text-slate-300">{tech}</span>
+              <Icon className={`h-8 w-8 ${color} transition-transform group-hover:scale-110`} />
+              <span className="text-xs font-medium text-slate-300">{name}</span>
             </div>
           ))}
         </div>
@@ -385,51 +394,77 @@ function TechnologySection() {
   );
 }
 
+function ArchNode({ children, className = '' }) {
+  return (
+    <div className={`rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-center text-xs font-medium text-slate-200 backdrop-blur-sm ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+function ArchArrow() {
+  return (
+    <div className="flex justify-center py-1">
+      <svg className="h-5 w-5 text-emerald-400/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+      </svg>
+    </div>
+  );
+}
+
+function ArchitectureDiagram({ expanded = false }) {
+  return (
+    <div className={`mx-auto w-full max-w-2xl space-y-0 ${expanded ? '' : 'max-h-80 overflow-hidden'}`}>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {['Weather API', 'Milk Production', 'Bank Transactions', 'UPI Data'].map((s) => (
+          <ArchNode key={s} className="border-blue-500/20 bg-blue-500/10 text-blue-200">{s}</ArchNode>
+        ))}
+      </div>
+      <ArchArrow />
+      <ArchNode className="mx-auto max-w-xs border-emerald-500/30 bg-emerald-500/10 text-emerald-300">
+        Feature Engineering
+      </ArchNode>
+      <ArchArrow />
+      <ArchNode className="mx-auto max-w-sm border-emerald-500/40 bg-gradient-to-r from-emerald-500/15 to-blue-500/15 text-white shadow-lg shadow-emerald-500/10">
+        Financial Digital Twin
+      </ArchNode>
+      <ArchArrow />
+      <ArchNode className="mx-auto max-w-sm border-purple-500/30 bg-purple-500/10 text-purple-200">
+        AI Layer — XGBoost + LSTM + SHAP
+      </ArchNode>
+      <ArchArrow />
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {['Financial Health', 'Risk Score', 'Cash Flow Prediction', 'Recommendations'].map((o) => (
+          <ArchNode key={o} className="border-emerald-500/20 bg-emerald-500/10 text-emerald-200">{o}</ArchNode>
+        ))}
+      </div>
+      <ArchArrow />
+      <div className="grid grid-cols-3 gap-2">
+        {['Farmer Dashboard', 'Bank Dashboard', 'NABARD Dashboard'].map((d) => (
+          <ArchNode key={d} className="border-white/20 bg-white/10 text-white">{d}</ArchNode>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ArchitectureSection() {
-  const [imgAvailable, setImgAvailable] = useState(true);
   const [expanded, setExpanded] = useState(false);
 
-  const handleViewFull = () => {
-    if (imgAvailable) {
-      window.open('/system_architecture.png', '_blank', 'noopener,noreferrer');
-    } else {
-      setExpanded(true);
-    }
-  };
-
   return (
-    <section id="architecture" className="py-10 lg:py-14">
+    <section id="architecture" className="scroll-mt-20 py-10 lg:py-14">
       <div className="mx-auto max-w-4xl px-6 lg:px-8">
         <SectionHeader title="Architecture" />
 
-        <DashboardCard hover={false} className="overflow-hidden p-3">
-          {imgAvailable ? (
-            <img
-              src="/system_architecture.png"
-              alt="GramSaarthi Nexus System Architecture"
-              className={`w-full rounded-lg transition-all ${expanded ? '' : 'max-h-48 object-cover object-top sm:max-h-56'}`}
-              onError={() => setImgAvailable(false)}
-              onClick={() => setExpanded((prev) => !prev)}
-            />
-          ) : (
-            <div className="flex aspect-video max-h-48 flex-col items-center justify-center rounded-lg border border-dashed border-white/15 bg-white/5 p-6 text-center">
-              <svg className="mb-2 h-10 w-10 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-              </svg>
-              <h3 className="text-sm font-semibold text-white">System Architecture Preview</h3>
-              <p className="mt-1 text-xs text-slate-400">
-                Architecture diagram placeholder
-              </p>
-            </div>
-          )}
-
-          <div className="mt-3 text-center">
+        <DashboardCard hover={false} className="overflow-hidden p-4 sm:p-6">
+          <ArchitectureDiagram expanded={expanded} />
+          <div className="mt-4 text-center">
             <button
               type="button"
-              onClick={handleViewFull}
+              onClick={() => setExpanded((prev) => !prev)}
               className="inline-flex items-center rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-white transition-all hover:border-emerald-400/30 hover:bg-white/10"
             >
-              View Full Architecture
+              {expanded ? 'Collapse Architecture' : 'View Full Architecture'}
             </button>
           </div>
         </DashboardCard>
@@ -440,7 +475,7 @@ function ArchitectureSection() {
 
 function CTASection() {
   return (
-    <section id="cta" className="py-10 lg:py-14">
+    <section id="cta" className="scroll-mt-20 py-10 lg:py-14">
       <div className="mx-auto max-w-3xl px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-emerald-500/10 via-[#0B1120] to-blue-500/10 px-6 py-10 text-center sm:px-10">
           <div className="pointer-events-none absolute inset-0">
